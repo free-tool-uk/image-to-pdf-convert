@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to PDF Converter | Advanced Tool</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #166088;
+            --accent-color: #4fc3f7;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .converter-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .upload-section {
+            flex: 1;
+            min-width: 300px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .settings-section {
+            flex: 1;
+            min-width: 300px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+        }
+        
+        .drop-area {
+            border: 3px dashed #ccc;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .drop-area:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(74, 111, 165, 0.05);
+        }
+        
+        .drop-area.highlight {
+            border-color: var(--success-color);
+            background-color: rgba(40, 167, 69, 0.05);
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-secondary {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            border: 1px solid #ccc;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e9ecef;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        .preview-container {
+            margin-top: 20px;
+        }
+        
+        .preview-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .preview-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .preview-image {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .preview-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .preview-image .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(220, 53, 69, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        select, input[type="range"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        input[type="range"] {
+            padding: 0;
+        }
+        
+        .range-value {
+            display: inline-block;
+            margin-left: 10px;
+            font-weight: bold;
+            min-width: 30px;
+            text-align: right;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-group input {
+            margin-right: 10px;
+        }
+        
+        .color-picker {
+            display: flex;
+            align-items: center;
+        }
+        
+        .color-picker input {
+            width: 50px;
+            height: 30px;
+            padding: 0;
+            margin-left: 10px;
+            border: 1px solid #ddd;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+            background-color: var(--dark-color);
+            color: white;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        @media (max-width: 768px) {
+            .converter-container {
+                flex-direction: column;
+            }
+            
+            .upload-section, .settings-section {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Advanced Image to PDF Converter</h1>
+            <p class="subtitle">Convert multiple images to a single PDF with customizable settings</p>
+        </div>
+    </header>
+    
+    <main class="container">
+        <div class="converter-container">
+            <section class="upload-section">
+                <h2>Upload Images</h2>
+                <div id="dropArea" class="drop-area">
+                    <p>Drag & drop your images here or click to browse</p>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*" multiple>
+                    <button class="btn" id="browseBtn">Browse Files</button>
+                </div>
+                <div class="preview-container">
+                    <p class="preview-title">Selected Images (<span id="fileCount">0</span>):</p>
+                    <div class="preview-images" id="previewImages"></div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-danger" id="clearBtn">Clear All</button>
+                    <button class="btn btn-success" id="convertBtn" disabled>Convert to PDF</button>
+                </div>
+            </section>
+            
+            <section class="settings-section">
+                <h2>PDF Settings</h2>
+                
+                <div class="form-group">
+                    <label for="pageSize">Page Size:</label>
+                    <select id="pageSize">
+                        <option value="a4">A4 (210 × 297 mm)</option>
+                        <option value="letter">Letter (8.5 × 11 in)</option>
+                        <option value="legal">Legal (8.5 × 14 in)</option>
+                        <option value="a5">A5 (148 × 210 mm)</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="customSizeGroup" style="display: none;">
+                    <label>Custom Size (mm):</label>
+                    <div style="display: flex; gap: 10px;">
+                        <div style="flex: 1;">
+                            <label for="customWidth">Width:</label>
+                            <input type="number" id="customWidth" min="50" max="500" value="210" class="form-control">
+                        </div>
+                        <div style="flex: 1;">
+                            <label for="customHeight">Height:</label>
+                            <input type="number" id="customHeight" min="50" max="500" value="297" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="pageOrientation">Orientation:</label>
+                    <select id="pageOrientation">
+                        <option value="portrait">Portrait</option>
+                        <option value="landscape">Landscape</option>
+                        <option value="auto">Auto (match image)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="imageFit">Image Fit:</label>
+                    <select id="imageFit">
+                        <option value="fill">Fill Page</option>
+                        <option value="fit">Fit to Page</option>
+                        <option value="stretch">Stretch to Page</option>
+                        <option value="actual">Actual Size</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="marginSize">Margin Size: <span id="marginValue" class="range-value">10</span>mm</label>
+                    <input type="range" id="marginSize" min="0" max="50" value="10">
+                </div>
+                
+                <div class="form-group">
+                    <label>Border Options:</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="addBorder" checked>
+                        <label for="addBorder">Add border around images</label>
+                    </div>
+                    <div id="borderOptions" style="margin-left: 20px;">
+                        <div class="form-group">
+                            <label for="borderWidth">Border Width: <span id="borderWidthValue" class="range-value">1</span>px</label>
+                            <input type="range" id="borderWidth" min="0" max="10" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="borderColor">Border Color:</label>
+                            <div class="color-picker">
+                                <select id="borderColorType">
+                                    <option value="color">Color</option>
+                                    <option value="black">Black</option>
+                                    <option value="white">White</option>
+                                    <option value="gray">Gray</option>
+                                </select>
+                                <input type="color" id="borderColor" value="#000000">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Page Spread:</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="enableSpread">
+                        <label for="enableSpread">Enable two-page spread (for book-like PDFs)</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="compression">Compression Quality:</label>
+                    <select id="compression">
+                        <option value="1.0">High (larger file)</option>
+                        <option value="0.8" selected>Medium (balanced)</option>
+                        <option value="0.6">Low (smaller file)</option>
+                    </select>
+                </div>
+            </section>
+        </div>
+        
+        <div class="loading" id="loadingIndicator">
+            <div class="spinner"></div>
+            <p>Creating PDF, please wait...</p>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>© 2023 Image to PDF Converter | All images are processed in your browser and never uploaded to any server</p>
+        </div>
+    </footer>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        // Initialize jsPDF
+        const { jsPDF } = window.jspdf;
+        
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize variables
+            const dropArea = document.getElementById('dropArea');
+            const fileInput = document.getElementById('fileInput');
+            const browseBtn = document.getElementById('browseBtn');
+            const previewImages = document.getElementById('previewImages');
+            const fileCount = document.getElementById('fileCount');
+            const clearBtn = document.getElementById('clearBtn');
+            const convertBtn = document.getElementById('convertBtn');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            
+            const pageSize = document.getElementById('pageSize');
+            const customSizeGroup = document.getElementById('customSizeGroup');
+            const customWidth = document.getElementById('customWidth');
+            const customHeight = document.getElementById('customHeight');
+            const pageOrientation = document.getElementById('pageOrientation');
+            const imageFit = document.getElementById('imageFit');
+            const marginSize = document.getElementById('marginSize');
+            const marginValue = document.getElementById('marginValue');
+            const addBorder = document.getElementById('addBorder');
+            const borderOptions = document.getElementById('borderOptions');
+            const borderWidth = document.getElementById('borderWidth');
+            const borderWidthValue = document.getElementById('borderWidthValue');
+            const borderColorType = document.getElementById('borderColorType');
+            const borderColor = document.getElementById('borderColor');
+            const enableSpread = document.getElementById('enableSpread');
+            const compression = document.getElementById('compression');
+            
+            let files = [];
+            
+            // Page size change handler
+            pageSize.addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    customSizeGroup.style.display = 'block';
+                } else {
+                    customSizeGroup.style.display = 'none';
+                }
+            });
+            
+            // Margin size change handler
+            marginSize.addEventListener('input', function() {
+                marginValue.textContent = this.value;
+            });
+            
+            // Border checkbox handler
+            addBorder.addEventListener('change', function() {
+                borderOptions.style.display = this.checked ? 'block' : 'none';
+            });
+            
+            // Border width change handler
+            borderWidth.addEventListener('input', function() {
+                borderWidthValue.textContent = this.value;
+            });
+            
+            // Border color type handler
+            borderColorType.addEventListener('change', function() {
+                if (this.value === 'color') {
+                    borderColor.style.display = 'block';
+                } else {
+                    borderColor.style.display = 'none';
+                    // Set predefined colors
+                    switch(this.value) {
+                        case 'black': borderColor.value = '#000000'; break;
+                        case 'white': borderColor.value = '#ffffff'; break;
+                        case 'gray': borderColor.value = '#808080'; break;
+                    }
+                }
+            });
+            
+            // Browse button click handler
+            browseBtn.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            // File input change handler
+            fileInput.addEventListener('change', function(e) {
+                handleFiles(e.target.files);
+            });
+            
+            // Drag and drop handlers
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                dropArea.classList.add('highlight');
+            }
+            
+            function unhighlight() {
+                dropArea.classList.remove('highlight');
+            }
+            
+            dropArea.addEventListener('drop', function(e) {
+                const dt = e.dataTransfer;
+                const droppedFiles = dt.files;
+                handleFiles(droppedFiles);
+            });
+            
+            // Clear button click handler
+            clearBtn.addEventListener('click', function() {
+                files = [];
+                updateFileList();
+                convertBtn.disabled = true;
+            });
+            
+            // Convert button click handler
+            convertBtn.addEventListener('click', convertToPDF);
+            
+            // Handle selected files
+            function handleFiles(selectedFiles) {
+                for (let i = 0; i < selectedFiles.length; i++) {
+                    const file = selectedFiles[i];
+                    if (file.type.startsWith('image/')) {
+                        files.push(file);
+                    }
+                }
+                updateFileList();
+                convertBtn.disabled = files.length === 0;
+            }
+            
+            // Update the file list preview
+            function updateFileList() {
+                previewImages.innerHTML = '';
+                fileCount.textContent = files.length;
+                
+                files.forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const previewImage = document.createElement('div');
+                        previewImage.className = 'preview-image';
+                        
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = file.name;
+                        
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-btn';
+                        removeBtn.innerHTML = '×';
+                        removeBtn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            files.splice(index, 1);
+                            updateFileList();
+                            convertBtn.disabled = files.length === 0;
+                        });
+                        
+                        previewImage.appendChild(img);
+                        previewImage.appendChild(removeBtn);
+                        previewImages.appendChild(previewImage);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+            
+            // Convert images to PDF
+            async function convertToPDF() {
+                if (files.length === 0) return;
+                
+                loadingIndicator.style.display = 'block';
+                convertBtn.disabled = true;
+                
+                try {
+                    // Get all settings
+                    const settings = {
+                        pageSize: pageSize.value,
+                        customWidth: parseFloat(customWidth.value),
+                        customHeight: parseFloat(customHeight.value),
+                        orientation: pageOrientation.value,
+                        imageFit: imageFit.value,
+                        margin: parseInt(marginSize.value),
+                        addBorder: addBorder.checked,
+                        borderWidth: parseInt(borderWidth.value),
+                        borderColor: borderColor.value,
+                        enableSpread: enableSpread.checked,
+                        compression: parseFloat(compression.value)
+                    };
+                    
+                    // Create PDF
+                    const pdf = new jsPDF();
+                    
+                    // Process each image
+                    for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
+                        const imageUrl = await readFileAsDataURL(file);
+                        
+                        // Add new page for each image after the first one
+                        if (i > 0) {
+                            pdf.addPage();
+                        }
+                        
+                        // Get page dimensions
+                        let pageWidth, pageHeight;
+                        if (settings.pageSize === 'custom') {
+                            pageWidth = settings.customWidth;
+                            pageHeight = settings.customHeight;
+                        } else {
+                            const dimensions = getPageDimensions(settings.pageSize);
+                            pageWidth = dimensions.width;
+                            pageHeight = dimensions.height;
+                        }
+                        
+                        // Adjust for orientation
+                        if (settings.orientation === 'landscape' && pageWidth < pageHeight) {
+                            [pageWidth, pageHeight] = [pageHeight, pageWidth];
+                        } else if (settings.orientation === 'portrait' && pageWidth > pageHeight) {
+                            [pageWidth, pageHeight] = [pageHeight, pageWidth];
+                        }
+                        
+                        // Load image to get its dimensions
+                        const img = await loadImage(imageUrl);
+                        let imgWidth = img.width;
+                        let imgHeight = img.height;
+                        
+                        // Calculate aspect ratios
+                        const imgAspectRatio = imgWidth / imgHeight;
+                        const pageAspectRatio = pageWidth / pageHeight;
+                        
+                        // Calculate available space with margins
+                        const margin = settings.margin;
+                        const availableWidth = pageWidth - (margin * 2);
+                        const availableHeight = pageHeight - (margin * 2);
+                        
+                        // Calculate image dimensions based on fit option
+                        let finalWidth, finalHeight;
+                        
+                        switch (settings.imageFit) {
+                            case 'fill':
+                                if (imgAspectRatio > pageAspectRatio) {
+                                    finalHeight = availableHeight;
+                                    finalWidth = finalHeight * imgAspectRatio;
+                                } else {
+                                    finalWidth = availableWidth;
+                                    finalHeight = finalWidth / imgAspectRatio;
+                                }
+                                break;
+                            case 'fit':
+                                if (imgAspectRatio > pageAspectRatio) {
+                                    finalWidth = availableWidth;
+                                    finalHeight = finalWidth / imgAspectRatio;
+                                } else {
+                                    finalHeight = availableHeight;
+                                    finalWidth = finalHeight * imgAspectRatio;
+                                }
+                                break;
+                            case 'stretch':
+                                finalWidth = availableWidth;
+                                finalHeight = availableHeight;
+                                break;
+                            case 'actual':
+                                // Convert pixels to mm (assuming 96 DPI)
+                                finalWidth = (imgWidth * 25.4) / 96;
+                                finalHeight = (imgHeight * 25.4) / 96;
+                                break;
+                        }
+                        
+                        // Calculate position to center the image
+                        const xPos = margin + (availableWidth - finalWidth) / 2;
+                        const yPos = margin + (availableHeight - finalHeight) / 2;
+                        
+                        // Add border if enabled
+                        if (settings.addBorder) {
+                            const rgb = hexToRgb(settings.borderColor);
+                            pdf.setDrawColor(rgb.r, rgb.g, rgb.b);
+                            pdf.setLineWidth(settings.borderWidth);
+                            pdf.rect(
+                                xPos - (settings.borderWidth / 2),
+                                yPos - (settings.borderWidth / 2),
+                                finalWidth + settings.borderWidth,
+                                finalHeight + settings.borderWidth,
+                                'S'
+                            );
+                        }
+                        
+                        // Add the image to the PDF
+                        pdf.addImage({
+                            imageData: imageUrl,
+                            x: xPos,
+                            y: yPos,
+                            width: finalWidth,
+                            height: finalHeight,
+                            compression: settings.compression < 1 ? 'FAST' : 'NONE'
+                        });
+                        
+                        // Handle page spread for book-like PDFs
+                        if (settings.enableSpread && i < files.length - 1) {
+                            pdf.addPage();
+                            i++; // Skip next image as it will be on the same spread
+                            
+                            const nextFile = files[i];
+                            const nextImageUrl = await readFileAsDataURL(nextFile);
+                            const nextImg = await loadImage(nextImageUrl);
+                            
+                            // Calculate dimensions for the second image
+                            let nextFinalWidth, nextFinalHeight;
+                            const nextImgAspectRatio = nextImg.width / nextImg.height;
+                            
+                            switch (settings.imageFit) {
+                                case 'fill':
+                                    if (nextImgAspectRatio > pageAspectRatio) {
+                                        nextFinalHeight = availableHeight;
+                                        nextFinalWidth = nextFinalHeight * nextImgAspectRatio;
+                                    } else {
+                                        nextFinalWidth = availableWidth;
+                                        nextFinalHeight = nextFinalWidth / nextImgAspectRatio;
+                                    }
+                                    break;
+                                case 'fit':
+                                    if (nextImgAspectRatio > pageAspectRatio) {
+                                        nextFinalWidth = availableWidth;
+                                        nextFinalHeight = nextFinalWidth / nextImgAspectRatio;
+                                    } else {
+                                        nextFinalHeight = availableHeight;
+                                        nextFinalWidth = nextFinalHeight * nextImgAspectRatio;
+                                    }
+                                    break;
+                                case 'stretch':
+                                    nextFinalWidth = availableWidth;
+                                    nextFinalHeight = availableHeight;
+                                    break;
+                                case 'actual':
+                                    nextFinalWidth = (nextImg.width * 25.4) / 96;
+                                    nextFinalHeight = (nextImg.height * 25.4) / 96;
+                                    break;
+                            }
+                            
+                            // Calculate position for the second image
+                            const nextXPos = margin + (availableWidth - nextFinalWidth) / 2;
+                            const nextYPos = margin + (availableHeight - nextFinalHeight) / 2;
+                            
+                            // Add border if enabled
+                            if (settings.addBorder) {
+                                const rgb = hexToRgb(settings.borderColor);
+                                pdf.setDrawColor(rgb.r, rgb.g, rgb.b);
+                                pdf.setLineWidth(settings.borderWidth);
+                                pdf.rect(
+                                    nextXPos - (settings.borderWidth / 2),
+                                    nextYPos - (settings.borderWidth / 2),
+                                    nextFinalWidth + settings.borderWidth,
+                                    nextFinalHeight + settings.borderWidth,
+                                    'S'
+                                );
+                            }
+                            
+                            // Add the second image to the PDF
+                            pdf.addImage({
+                                imageData: nextImageUrl,
+                                x: nextXPos,
+                                y: nextYPos,
+                                width: nextFinalWidth,
+                                height: nextFinalHeight,
+                                compression: settings.compression < 1 ? 'FAST' : 'NONE'
+                            });
+                        }
+                    }
+                    
+                    // Save the PDF
+                    pdf.save('converted_images.pdf');
+                    
+                } catch (error) {
+                    console.error('Error creating PDF:', error);
+                    alert('An error occurred while creating the PDF. Please try again.');
+                } finally {
+                    loadingIndicator.style.display = 'none';
+                    convertBtn.disabled = files.length === 0;
+                }
+            }
+            
+            // Helper function to read file as data URL
+            function readFileAsDataURL(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            }
+            
+            // Helper function to load image and get dimensions
+            function loadImage(url) {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.onload = () => resolve(img);
+                    img.onerror = reject;
+                    img.src = url;
+                });
+            }
+            
+            // Helper function to get page dimensions
+            function getPageDimensions(size) {
+                switch (size) {
+                    case 'a4': return { width: 210, height: 297 };
+                    case 'letter': return { width: 215.9, height: 279.4 };
+                    case 'legal': return { width: 215.9, height: 355.6 };
+                    case 'a5': return { width: 148, height: 210 };
+                    default: return { width: 210, height: 297 };
+                }
+            }
+            
+            // Helper function to convert hex color to RGB
+            function hexToRgb(hex) {
+                // Remove # if present
+                hex = hex.replace('#', '');
+                
+                // Parse r, g, b values
+                const r = parseInt(hex.substring(0, 2), 16);
+                const g = parseInt(hex.substring(2, 4), 16);
+                const b = parseInt(hex.substring(4, 6), 16);
+                
+                return { r, g, b };
+            }
+        });
+    </script>
+</body>
+</html>
